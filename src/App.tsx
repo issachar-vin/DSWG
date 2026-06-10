@@ -44,8 +44,8 @@ export default function App() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35 }}
               >
-                Battle-tested strategies for all seven factions — mechanics, councilors,
-                phase-by-phase game plans, and the victory paths that actually win.
+                Pick your faction for an in-game battle card: build orders, development
+                priorities, unit matchups, and a counter plan for every enemy on the map.
               </motion.p>
             </header>
             <motion.div
