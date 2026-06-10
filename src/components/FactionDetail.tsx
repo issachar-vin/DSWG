@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { factions, ROLE_LABELS } from '../data/factions';
 import type { DevTree, Faction } from '../data/factions';
@@ -38,13 +39,29 @@ function Panel({ title, children, className }: { title: string; children: React.
 interface Props {
   faction: Faction;
   onBack: () => void;
+  onSelect: (id: string) => void;
 }
 
-export default function FactionDetail({ faction, onBack }: Props) {
+export default function FactionDetail({ faction, onBack, onSelect }: Props) {
   const enemies = faction.matchups.map((m) => ({
     matchup: m,
     enemy: factions.find((f) => f.id === m.enemyId)!,
   }));
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onBack();
+        return;
+      }
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const index = factions.findIndex((f) => f.id === faction.id);
+      const step = e.key === 'ArrowRight' ? 1 : -1;
+      onSelect(factions[(index + step + factions.length) % factions.length].id);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [faction.id, onBack, onSelect]);
 
   return (
     <AccentContext.Provider value={faction.color}>
@@ -56,9 +73,32 @@ export default function FactionDetail({ faction, onBack }: Props) {
         exit={{ opacity: 0 }}
       >
         <header className="detail-banner dash-banner">
-          <button className="back-button" onClick={onBack}>
-            ← All Factions
-          </button>
+          <div className="banner-nav">
+            <button className="back-button" onClick={onBack}>
+              ← All Factions
+            </button>
+            <nav className="faction-switcher" aria-label="Switch faction">
+              <span className="switcher-hint" aria-hidden="true">
+                ‹
+              </span>
+              {factions.map((f) => (
+                <button
+                  key={f.id}
+                  className={`switcher-sigil${f.id === faction.id ? ' current' : ''}`}
+                  style={{ '--accent': f.color } as React.CSSProperties}
+                  title={`${f.name} (←/→ to cycle)`}
+                  aria-label={f.name}
+                  aria-current={f.id === faction.id ? 'page' : undefined}
+                  onClick={() => onSelect(f.id)}
+                >
+                  {sigilLetter(f.name)}
+                </button>
+              ))}
+              <span className="switcher-hint" aria-hidden="true">
+                ›
+              </span>
+            </nav>
+          </div>
           <motion.div className="faction-sigil large" layoutId={`sigil-${faction.id}`}>
             {sigilLetter(faction.name)}
           </motion.div>
@@ -260,6 +300,13 @@ export default function FactionDetail({ faction, onBack }: Props) {
                         <span>Counter</span> {matchup.counter}
                       </p>
                     </div>
+                    <button
+                      className="enemy-jump"
+                      aria-label={`Open ${enemy.name} guide`}
+                      onClick={() => onSelect(enemy.id)}
+                    >
+                      →
+                    </button>
                   </div>
                 </HoverCard>
               ))}
