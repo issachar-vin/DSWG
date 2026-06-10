@@ -4,14 +4,170 @@
   overflow-x: hidden;
 }
 
+.hub {
+  will-change: transform;
+}
+
+.sky-bodies {
+  position: absolute;
+  inset: 0;
+}
+
 .dunes-backdrop {
   position: fixed;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
   background:
     radial-gradient(ellipse 120% 60% at 50% -10%, rgba(224, 123, 57, 0.12), transparent 60%),
     radial-gradient(ellipse 80% 40% at 80% 110%, rgba(201, 160, 100, 0.1), transparent 60%),
     var(--bg);
+}
+
+/* Night sky over Arrakis: tiled star layers fading toward the dune horizon */
+
+.stars {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  mask-image: linear-gradient(to bottom, black 55%, transparent 92%);
+}
+
+.stars-far {
+  background-image:
+    radial-gradient(1px 1px at 17px 34px, rgba(232, 220, 200, 0.5), transparent),
+    radial-gradient(1px 1px at 89px 121px, rgba(232, 220, 200, 0.35), transparent),
+    radial-gradient(1px 1px at 153px 61px, rgba(201, 160, 100, 0.4), transparent),
+    radial-gradient(1px 1px at 211px 147px, rgba(232, 220, 200, 0.45), transparent),
+    radial-gradient(1px 1px at 41px 173px, rgba(232, 220, 200, 0.3), transparent),
+    radial-gradient(1px 1px at 247px 19px, rgba(232, 220, 200, 0.38), transparent);
+  background-size: 271px 193px;
+  animation: twinkle 9s ease-in-out infinite alternate;
+}
+
+.stars-mid {
+  background-image:
+    radial-gradient(1.5px 1.5px at 67px 23px, rgba(232, 220, 200, 0.55), transparent),
+    radial-gradient(1.5px 1.5px at 191px 156px, rgba(224, 123, 57, 0.45), transparent),
+    radial-gradient(1.5px 1.5px at 137px 97px, rgba(232, 220, 200, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 293px 201px, rgba(232, 220, 200, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 29px 229px, rgba(201, 160, 100, 0.5), transparent);
+  background-size: 331px 257px;
+  animation: twinkle 7s ease-in-out 1.5s infinite alternate;
+}
+
+.stars-near {
+  background-image:
+    radial-gradient(2px 2px at 103px 47px, rgba(232, 220, 200, 0.75), transparent),
+    radial-gradient(2.5px 2.5px at 311px 191px, rgba(232, 220, 200, 0.6), transparent),
+    radial-gradient(2px 2px at 223px 277px, rgba(224, 123, 57, 0.55), transparent),
+    radial-gradient(2px 2px at 47px 233px, rgba(232, 220, 200, 0.65), transparent);
+  background-size: 401px 313px;
+  animation: twinkle 5s ease-in-out 0.8s infinite alternate;
+}
+
+@keyframes twinkle {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The two moons of Arrakis */
+
+.moon {
+  position: absolute;
+  border-radius: 50%;
+  animation: moon-float 36s ease-in-out infinite alternate;
+}
+
+.moon-first {
+  top: 9%;
+  right: 11%;
+  width: 120px;
+  height: 120px;
+  background:
+    radial-gradient(circle at 68% 38%, rgba(61, 47, 30, 0.5) 0 7%, transparent 9%),
+    radial-gradient(circle at 42% 64%, rgba(61, 47, 30, 0.45) 0 5%, transparent 7%),
+    radial-gradient(circle at 56% 22%, rgba(61, 47, 30, 0.4) 0 4%, transparent 6%),
+    radial-gradient(circle at 33% 30%, rgba(238, 226, 204, 0.95), rgba(201, 160, 100, 0.6) 48%, rgba(33, 24, 16, 0.95) 80%);
+  box-shadow: 0 0 70px 14px rgba(201, 160, 100, 0.16);
+  opacity: 0.55;
+}
+
+.moon-second {
+  top: 22%;
+  left: 7%;
+  width: 56px;
+  height: 56px;
+  background:
+    radial-gradient(circle at 60% 55%, rgba(61, 47, 30, 0.45) 0 8%, transparent 11%),
+    radial-gradient(circle at 36% 34%, rgba(236, 196, 156, 0.85), rgba(224, 123, 57, 0.45) 52%, rgba(33, 24, 16, 0.95) 82%);
+  box-shadow: 0 0 40px 8px rgba(224, 123, 57, 0.14);
+  opacity: 0.45;
+  animation-duration: 44s;
+  animation-delay: -12s;
+}
+
+@keyframes moon-float {
+  from {
+    transform: translateY(-8px);
+  }
+  to {
+    transform: translateY(10px);
+  }
+}
+
+/* Distant ringed planet, low over the horizon */
+
+.planet-distant {
+  position: absolute;
+  top: 38%;
+  left: 18%;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, rgba(168, 152, 126, 0.8), rgba(110, 95, 75, 0.5) 55%, rgba(33, 24, 16, 0.9) 85%);
+  opacity: 0.35;
+}
+
+.planet-distant::after {
+  content: '';
+  position: absolute;
+  inset: 38% -42%;
+  border: 1.5px solid rgba(201, 160, 100, 0.45);
+  border-radius: 50%;
+  transform: rotate(-18deg);
+}
+
+.shooting-star {
+  position: absolute;
+  top: 12%;
+  left: -8%;
+  width: 110px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(238, 226, 204, 0.85));
+  opacity: 0;
+  animation: shoot 17s linear infinite;
+}
+
+@keyframes shoot {
+  0%,
+  90% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(9deg);
+  }
+  92% {
+    opacity: 0.85;
+  }
+  97%,
+  100% {
+    opacity: 0;
+    transform: translate(115vw, 18vh) rotate(9deg);
+  }
 }
 
 .dunes-backdrop::after {
@@ -80,14 +236,19 @@ main {
 
 .faction-card {
   position: relative;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-card) 52%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
   border-radius: 12px;
   padding: 28px 24px 22px;
   text-align: left;
   color: var(--text);
   transition: border-color 0.25s, box-shadow 0.25s;
   overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(232, 220, 200, 0.06),
+    0 22px 44px -20px rgba(0, 0, 0, 0.65);
 }
 
 .faction-card::before {
@@ -190,29 +351,84 @@ main {
   gap: 24px;
   flex-wrap: wrap;
   padding: 28px;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
   border-radius: 14px;
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
-    var(--bg-raised);
+    color-mix(in srgb, var(--bg-raised) 55%, transparent);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow:
+    inset 0 1px 0 rgba(232, 220, 200, 0.07),
+    0 26px 52px -22px rgba(0, 0, 0, 0.7);
   margin-bottom: 28px;
 }
 
-.back-button {
+.banner-nav {
   flex-basis: 100%;
-  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.back-button {
   width: fit-content;
   background: none;
   border: none;
   color: var(--text-dim);
   font-size: 0.9rem;
   padding: 0;
-  margin-bottom: 4px;
   transition: color 0.2s;
 }
 
 .back-button:hover {
   color: var(--accent);
+}
+
+.faction-switcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.switcher-hint {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  opacity: 0.6;
+  user-select: none;
+}
+
+.switcher-sigil {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  opacity: 0.45;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.switcher-sigil:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.switcher-sigil.current {
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  opacity: 1;
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 .detail-title h1 {
@@ -369,7 +585,9 @@ main {
   position: fixed;
   z-index: 60;
   width: min(300px, calc(100vw - 24px));
-  background: var(--bg-raised);
+  background: color-mix(in srgb, var(--bg-raised) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
   border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
   border-radius: 10px;
   padding: 12px 14px;
@@ -419,11 +637,16 @@ main {
 }
 
 .panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-card) 52%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
   border-top: 2px solid color-mix(in srgb, var(--accent) 65%, transparent);
   border-radius: 10px;
   padding: 14px 16px 16px;
+  box-shadow:
+    inset 0 1px 0 rgba(232, 220, 200, 0.06),
+    0 22px 44px -20px rgba(0, 0, 0, 0.65);
 }
 
 .panel-title {
@@ -687,6 +910,28 @@ main {
 
 .enemy-body {
   min-width: 0;
+  flex: 1;
+}
+
+.enemy-jump {
+  align-self: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: none;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  line-height: 1;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.enemy-jump:hover {
+  color: var(--enemy);
+  border-color: var(--enemy);
+  transform: translateX(2px);
 }
 
 .enemy-name {
@@ -828,7 +1073,13 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dunes-backdrop::after {
+  .dunes-backdrop::after,
+  .stars,
+  .moon {
     animation: none;
+  }
+
+  .shooting-star {
+    display: none;
   }
 }
