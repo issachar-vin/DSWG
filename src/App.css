@@ -1230,7 +1230,7 @@ main {
 
 /* Enemy playbook */
 
-.panel.enemies > .hover-target + .hover-target {
+.panel.enemies > .enemy-row + .enemy-row {
   border-top: 1px solid var(--border);
   border-radius: 0 0 3px 3px;
 }
@@ -1296,10 +1296,6 @@ main {
   font-size: 0.75rem;
   line-height: 1.45;
   color: var(--text-dim);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .enemy-line > span {
