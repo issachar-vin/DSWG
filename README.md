@@ -1,73 +1,38 @@
-# React + TypeScript + Vite
+# Dune: Spice Wars — Faction Strategy Compendium
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Live at **[dswg.eroizzy.com](https://dswg.eroizzy.com)**
 
-Currently, two official plugins are available:
+At-a-glance strategy reference for all 7 factions in Dune: Spice Wars. Holographic cockpit UI with per-faction build orders, tech priorities, councilor picks, unit breakdowns, and enemy-specific matchup guides.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- Vite + React 19 + TypeScript (strict)
+- framer-motion for animations and shared-layout morphs
+- Plain CSS with custom properties for per-faction theming
+- No backend, no router, no state library — all content is hardcoded typed data
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Dev
 
-## Expanding the ESLint configuration
+```bash
+# Docker (recommended)
+make dev          # docker compose up → localhost:5173
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Local
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Other make targets: `lint`, `test` (runs build), `clean`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Content
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+All strategy content lives in [src/data/factions.ts](src/data/factions.ts). The UI is purely presentational — to update strategy for a balance patch, edit only that file. Researched from TheGamer, GameSkinny, MyGamingTutorials, GameRant, the DUNE.io community stats site, Steam guides, and the Spice Wars fandom wiki (June 2026).
+
+## Contributing
+
+`main` is protected. Branch → PR, squash merge only.
+
+```bash
+npm run build    # tsc + vite build
+npx eslint .     # lint
 ```
