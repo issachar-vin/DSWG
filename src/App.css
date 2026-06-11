@@ -454,24 +454,72 @@ main {
 /* Hero */
 
 .hero {
+  max-width: 880px;
+  margin: 0 auto 56px;
+  padding: 46px clamp(20px, 6vw, 56px) 44px;
   text-align: center;
-  margin-bottom: 56px;
   transition: opacity 0.3s;
 }
 
+/* HUD readout strip pinned to the hero frame's top edge */
+.hero-readouts {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-hud);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: color-mix(in srgb, var(--spice) 65%, var(--text-dim));
+  opacity: 0.85;
+}
+
+.hero-readouts span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
 .hero-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
   font-family: var(--font-hud);
   text-transform: uppercase;
   letter-spacing: 0.5em;
+  text-indent: 0.5em; /* recenters: tracking adds a trailing gap after the last glyph */
   font-size: 0.8rem;
   color: var(--spice);
   text-shadow: 0 0 14px rgba(224, 123, 57, 0.55);
-  margin: 0 0 8px;
+  margin: 0 0 10px;
+}
+
+/* HUD rule lines flanking the kicker */
+.hero-kicker::before,
+.hero-kicker::after {
+  content: '';
+  width: clamp(40px, 8vw, 90px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--spice));
+  box-shadow: 0 0 10px rgba(224, 123, 57, 0.6);
+}
+
+.hero-kicker::after {
+  background: linear-gradient(270deg, transparent, var(--spice));
 }
 
 .hero h1 {
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  margin: 0 0 16px;
+  font-size: clamp(2.1rem, 5.5vw, 3.6rem);
+  margin: 0 0 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
+  font-weight: 600;
   background: linear-gradient(180deg, #fff8ec 0%, var(--text) 40%, var(--sand) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -479,11 +527,25 @@ main {
   filter: drop-shadow(0 0 22px rgba(224, 123, 57, 0.25));
 }
 
+/* Imperial seal divider under the title */
+.hero h1::after {
+  content: '';
+  display: block;
+  width: min(340px, 60%);
+  height: 1px;
+  margin: 20px auto 0;
+  background: linear-gradient(90deg, transparent, var(--sand) 25%, var(--sand) 75%, transparent);
+  box-shadow: 0 0 12px rgba(201, 160, 100, 0.5);
+}
+
 .hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.15rem;
   color: var(--text-dim);
-  max-width: 560px;
+  max-width: 620px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .powering-down .hero,
@@ -497,7 +559,8 @@ main {
 
 .faction-card,
 .detail-banner,
-.panel {
+.panel,
+.hero {
   position: relative;
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 42%),
@@ -516,7 +579,8 @@ main {
 /* Corner brackets */
 .faction-card::before,
 .detail-banner::before,
-.panel::before {
+.panel::before,
+.hero::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -540,7 +604,8 @@ main {
 /* Glass sheen + projection scanlines */
 .faction-card::after,
 .detail-banner::after,
-.panel::after {
+.panel::after,
+.hero::after {
   content: '';
   position: absolute;
   inset: 0;

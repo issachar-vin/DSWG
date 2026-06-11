@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { factions, ROLE_LABELS } from '../data/factions';
+import { DIFFICULTY_LABELS, factions, getFaction, ROLE_LABELS, sigilLetter } from '../data/factions';
 import type { DevTree, Faction } from '../data/factions';
 import HoverCard from './HoverCard';
 import { AccentContext } from './accent';
+import { crtBoot } from './crt';
 import { RoleIcon } from './Icons';
 import FactionImage from './FactionImage';
-
-const DIFFICULTY_LABELS = ['Beginner', 'Intermediate', 'Advanced'];
 
 const TREE_LABELS: Record<DevTree, string> = {
   economy: 'Economy',
@@ -16,28 +15,17 @@ const TREE_LABELS: Record<DevTree, string> = {
   expansion: 'Expansion',
 };
 
-// Holographic boot-in: random per-panel delay, whole dashboard online within 1s.
-const boot = (delay: number) => ({
-  opacity: [0, 1, 0.3, 1, 0.6, 1],
-  filter: [
-    'brightness(2.6) blur(6px)',
-    'brightness(1.6) blur(2px)',
-    'brightness(0.7) blur(1px)',
-    'brightness(1.5) blur(0px)',
-    'brightness(0.85) blur(0px)',
-    'brightness(1) blur(0px)',
-  ],
-  transition: { duration: 0.34, delay, times: [0, 0.18, 0.34, 0.55, 0.78, 1], ease: 'linear' as const },
-});
+const PHASE_LABELS = { early: 'Early', mid: 'Mid', late: 'Late' } as const;
 
+type Phase = keyof typeof PHASE_LABELS;
+
+// CRT power-on + flicker per panel with a random delay; whole dashboard online within ~1s.
 // Dynamic variant: framer resolves the random delay at animation time, keeping render pure.
 const panelVariants = {
   hidden: { opacity: 0 },
   on: { opacity: 1 },
-  boot: () => boot(Math.random() * 0.6),
+  boot: () => crtBoot(Math.random() * 0.45),
 };
-
-const sigilLetter = (name: string) => name.replace(/^(House |The )/, '').charAt(0);
 
 function Panel({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   const reduceMotion = useReducedMotion();
@@ -64,7 +52,7 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
   const reduceMotion = useReducedMotion();
   const enemies = faction.matchups.map((m) => ({
     matchup: m,
-    enemy: factions.find((f) => f.id === m.enemyId)!,
+    enemy: getFaction(m.enemyId),
   }));
 
   useEffect(() => {
@@ -86,7 +74,7 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
     <AccentContext.Provider value={faction.color}>
       <motion.section
         className="faction-detail dashboard"
-        style={{ '--accent': faction.color } as React.CSSProperties}
+        style={{ '--accent': faction.color }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.05 } }}
         exit={{ opacity: 0, transition: { duration: 0.12 } }}
@@ -94,7 +82,7 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
         <motion.header
           className="detail-banner dash-banner"
           initial={{ opacity: 0 }}
-          animate={reduceMotion ? { opacity: 1 } : boot(0.02)}
+          animate={reduceMotion ? { opacity: 1 } : crtBoot(0.02)}
         >
           <div className="faction-img-wrap banner-img-wrap" aria-hidden="true">
             <FactionImage src={faction.image} className="faction-img" />
@@ -111,7 +99,7 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
                 <button
                   key={f.id}
                   className={`switcher-sigil${f.id === faction.id ? ' current' : ''}`}
-                  style={{ '--accent': f.color } as React.CSSProperties}
+                  style={{ '--accent': f.color }}
                   title={`${f.name} (←/→ to cycle)`}
                   aria-label={f.name}
                   aria-current={f.id === faction.id ? 'page' : undefined}
@@ -180,9 +168,9 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
 
         <Panel title="Game Plan" className="plan-strip">
           <div className="plan-phases">
-            {(['early', 'mid', 'late'] as const).map((phase) => (
+            {(Object.keys(PHASE_LABELS) as Phase[]).map((phase) => (
               <div key={phase} className="plan-phase">
-                <h3>{phase === 'early' ? 'Early' : phase === 'mid' ? 'Mid' : 'Late'}</h3>
+                <h3>{PHASE_LABELS[phase]}</h3>
                 <ul>
                   {faction.gamePlan[phase].map((point) => (
                     <li key={point}>{point}</li>
@@ -228,9 +216,7 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
                               <p className="hover-kicker">Deny by enemy</p>
                               {dev.patentPlan.byEnemy.map((target) => (
                                 <p key={target.enemyId} className="patent-enemy">
-                                  <strong>
-                                    {factions.find((f) => f.id === target.enemyId)!.name}:
-                                  </strong>{' '}
+                                  <strong>{getFaction(target.enemyId).name}:</strong>{' '}
                                   {target.picks}
                                 </p>
                               ))}
@@ -335,7 +321,7 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
           <div className="dash-col">
             <Panel title="Enemy Playbook" className="enemies">
               {enemies.map(({ matchup, enemy }) => (
-                <div key={enemy.id} className="enemy-row" style={{ '--enemy': enemy.color } as React.CSSProperties}>
+                <div key={enemy.id} className="enemy-row" style={{ '--enemy': enemy.color }}>
                   <span className="enemy-sigil">{sigilLetter(enemy.name)}</span>
                   <div className="enemy-body">
                     <span className="enemy-name">{enemy.name}</span>

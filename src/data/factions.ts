@@ -94,6 +94,11 @@ export interface Faction {
   matchups: Matchup[];
 }
 
+export const DIFFICULTY_LABELS = ['Beginner', 'Intermediate', 'Advanced'] as const;
+
+/** First letter of the faction's short name, used to render CSS sigils. */
+export const sigilLetter = (name: string) => name.replace(/^(House |The )/, '').charAt(0);
+
 export const factions: Faction[] = [
   {
     id: 'atreides',
@@ -2326,6 +2331,15 @@ export const factions: Faction[] = [
     ],
   },
 ];
+
+export const factionById = new Map(factions.map((f) => [f.id, f]));
+
+/** Fail fast on broken cross-references (e.g. a matchup pointing at a missing faction). */
+export function getFaction(id: string): Faction {
+  const faction = factionById.get(id);
+  if (!faction) throw new Error(`Unknown faction id: ${id}`);
+  return faction;
+}
 
 export const sources = [
   {
