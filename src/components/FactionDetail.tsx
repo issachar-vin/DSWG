@@ -174,6 +174,21 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
           </div>
         </motion.header>
 
+        <Panel title="Game Plan" className="plan-strip">
+          <div className="plan-phases">
+            {(['early', 'mid', 'late'] as const).map((phase) => (
+              <div key={phase} className="plan-phase">
+                <h3>{phase === 'early' ? 'Early' : phase === 'mid' ? 'Mid' : 'Late'}</h3>
+                <ul>
+                  {faction.gamePlan[phase].map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
         <div className="dash-grid">
           <div className="dash-col">
             <Panel title="Opening Build Order">
@@ -339,20 +354,6 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
             </Panel>
           </div>
 
-          <Panel title="Game Plan" className="plan-strip">
-            <div className="plan-phases">
-              {(['early', 'mid', 'late'] as const).map((phase) => (
-                <div key={phase} className="plan-phase">
-                  <h3>{phase === 'early' ? 'Early' : phase === 'mid' ? 'Mid' : 'Late'}</h3>
-                  <ul>
-                    {faction.gamePlan[phase].map((point) => (
-                      <li key={point}>{point}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </Panel>
         </div>
       </motion.section>
     </AccentContext.Provider>
