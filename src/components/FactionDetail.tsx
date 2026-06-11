@@ -5,6 +5,7 @@ import type { DevTree, Faction } from '../data/factions';
 import HoverCard from './HoverCard';
 import { AccentContext } from './accent';
 import { RoleIcon } from './Icons';
+import FactionImage from './FactionImage';
 
 const DIFFICULTY_LABELS = ['Beginner', 'Intermediate', 'Advanced'];
 
@@ -95,6 +96,9 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
           initial={{ opacity: 0 }}
           animate={reduceMotion ? { opacity: 1 } : boot(0.02)}
         >
+          <div className="faction-img-wrap banner-img-wrap" aria-hidden="true">
+            <FactionImage src={faction.image} className="faction-img" />
+          </div>
           <div className="banner-nav">
             <button className="back-button" onClick={onBack}>
               ← All Factions

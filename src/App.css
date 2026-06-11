@@ -521,6 +521,7 @@ main {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 2;
   background-image:
     linear-gradient(var(--accent), var(--accent)),
     linear-gradient(var(--accent), var(--accent)),
@@ -545,6 +546,7 @@ main {
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
+  z-index: 3;
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.05), transparent 28%),
     repeating-linear-gradient(0deg, rgba(190, 215, 255, 0.025) 0 1px, transparent 1px 3px);
@@ -572,6 +574,80 @@ main {
     inset 0 0 32px color-mix(in srgb, var(--accent) 12%, transparent),
     0 0 42px -6px color-mix(in srgb, var(--accent) 55%, transparent),
     0 12px 40px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* Faction image backgrounds — cards and banner */
+
+.faction-img-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+  /* Fade left edge to transparent so text stays legible */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 35%, black 65%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 35%, black 65%);
+}
+
+/* Detail banner: centered with a fade on both sides */
+.banner-img-wrap {
+  width: 45%;
+  right: 50%;
+  transform: translateX(50%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%, black 70%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 30%, black 70%, transparent 100%);
+}
+
+/* Symmetric accent tint to match the two-sided fade */
+.banner-img-wrap::after {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 26%, transparent) 50%,
+    transparent 100%
+  );
+}
+
+.faction-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  /* Desaturate + dim for holographic projection look */
+  filter: saturate(0.28) brightness(0.48) contrast(1.1);
+}
+
+/* Scanline texture on top of the image */
+.faction-img-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 4px);
+  z-index: 1;
+}
+
+/* Accent-colored screen tint — blends the faction color into the ghosted image */
+.faction-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to left,
+    color-mix(in srgb, var(--accent) 38%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 10%, transparent) 50%,
+    transparent 80%
+  );
+  mix-blend-mode: screen;
+  z-index: 2;
 }
 
 .faction-card h2 {
@@ -1374,6 +1450,18 @@ main {
 }
 
 @media (max-width: 720px) {
+  .faction-img-wrap {
+    width: 50%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.4) 45%, black 75%);
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.4) 45%, black 75%);
+  }
+
+  .banner-img-wrap {
+    width: 55%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%, black 70%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 30%, black 70%, transparent 100%);
+  }
+
   .dash-grid,
   .plan-phases {
     grid-template-columns: 1fr;
