@@ -73,14 +73,12 @@ export default function HoverCard({ card, children, className }: Props) {
             <motion.div
               ref={cardRef}
               className="hover-card"
-              style={
-                {
-                  top: pos.top,
-                  bottom: pos.bottom,
-                  left: pos.left,
-                  '--accent': accent,
-                } as React.CSSProperties
-              }
+              style={{
+                top: pos.top,
+                bottom: pos.bottom,
+                left: pos.left,
+                '--accent': accent,
+              }}
               initial={{ opacity: 0, y: pos.flip ? -4 : 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}

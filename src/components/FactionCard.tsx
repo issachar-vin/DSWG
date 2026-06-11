@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { DIFFICULTY_LABELS, sigilLetter } from '../data/factions';
 import type { Faction } from '../data/factions';
+import { crtBoot, crtOff } from './crt';
 import FactionImage from './FactionImage';
-
-const DIFFICULTY_LABELS = ['Beginner', 'Intermediate', 'Advanced'];
 
 interface Props {
   faction: Faction;
@@ -14,31 +15,18 @@ interface Props {
 
 export default function FactionCard({ faction, onSelect, shutdown, picked, locked }: Props) {
   const reduceMotion = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.button
       className="faction-card"
-      style={{ '--accent': faction.color } as React.CSSProperties}
+      style={{ '--accent': faction.color }}
       variants={{
-        hidden: { opacity: 0, y: 26 },
-        visible: {
-          opacity: reduceMotion ? 1 : [0, 0.9, 0.35, 1],
-          y: 0,
-          transition: { duration: 0.45 },
-        },
-        // CRT power-off: flash bright, collapse to a scanline, then to a dot
-        off: () => ({
-          scaleY: [1, 1.03, 0.012, 0.012],
-          scaleX: [1, 1, 1, 0],
-          opacity: [1, 1, 1, 0],
-          filter: ['brightness(1)', 'brightness(2.2)', 'brightness(6)', 'brightness(0.5)'],
-          transition: {
-            duration: 0.3,
-            delay: Math.random() * 0.12,
-            times: [0, 0.25, 0.55, 1],
-            ease: 'easeIn' as const,
-          },
-        }),
+        hidden: { opacity: 0 },
+        // CRT power-on (the off sequence reversed) settling into the holo flicker;
+        // random delay per card like the dashboard panels, 0.4s base so the hero lands first
+        visible: reduceMotion ? { opacity: 1 } : () => crtBoot(0.4 + Math.random() * 0.45),
+        off: () => crtOff(Math.random() * 0.12),
         picked: {
           scale: [1, 1.035, 1.02],
           filter: ['brightness(1)', 'brightness(1.7)', 'brightness(1.25)'],
@@ -48,13 +36,15 @@ export default function FactionCard({ faction, onSelect, shutdown, picked, locke
       animate={shutdown && !reduceMotion ? 'off' : picked && !reduceMotion ? 'picked' : undefined}
       whileHover={locked ? undefined : { y: -8, transition: { duration: 0.2 } }}
       whileTap={locked ? undefined : { scale: 0.97 }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
       onClick={() => !locked && onSelect(faction.id)}
     >
       <div className="faction-img-wrap" aria-hidden="true">
-        <FactionImage src={faction.image} className="faction-img" />
+        <FactionImage src={faction.image} className="faction-img" replayOn={hovered} />
       </div>
       <motion.div className="faction-sigil" layoutId={`sigil-${faction.id}`}>
-        {faction.name.replace(/^(House |The )/, '').charAt(0)}
+        {sigilLetter(faction.name)}
       </motion.div>
       <h2>{faction.name}</h2>
       <p className="faction-archetype">{faction.archetype}</p>
