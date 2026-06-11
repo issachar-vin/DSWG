@@ -35,6 +35,10 @@ export interface DevStep {
   name: string;
   tree: DevTree;
   why: string;
+  patentPlan?: {
+    order: string[];
+    byEnemy: { enemyId: string; picks: string }[];
+  };
 }
 
 export interface BuildingCombo {
@@ -2109,7 +2113,52 @@ export const factions: Faction[] = [
       {
         name: 'Patent targets (post-5k)',
         tree: 'economy',
-        why: 'After 5,000 Hegemony the dev order becomes: whatever 600 Solari buys that rivals wanted.',
+        why:
+          'After 5,000 Hegemony the dev order becomes: whatever 600 Solari buys that rivals wanted. ' +
+          'Only developments no rival has researched yet can be patented — your research lead means the ' +
+          'deep tree is yours to fence off. Patents lock the tree slot, so faction-unique developments ' +
+          'sitting in that slot are blocked too.',
+        patentPlan: {
+          order: [
+            'Call to Arms — every late-game army wants Tier 4 units; taxes every war plan on the map',
+            'CHOAM Hegemony — the late Solari engine every economic path runs through',
+            'High Command — the command-point/armor capstone all warmongers need',
+            'Riches of Arrakis — special-region Solari most rivals bank on for the endgame',
+            'Airfield Network — late logistics relief everyone grabs; cheap rent forever',
+          ],
+          byEnemy: [
+            {
+              enemyId: 'atreides',
+              picks:
+                'Both Atreides Delegation slots (statecraft + economy) — their relationship economy and treaty leverage die without them.',
+            },
+            {
+              enemyId: 'harkonnen',
+              picks:
+                'Martial Economy — the −30% upkeep their army math assumes; then Central Command to blunt the late push.',
+            },
+            {
+              enemyId: 'fremen',
+              picks:
+                'Spice Hegemony and Spice Market — the crew-stacked harvesting engine is their whole economy.',
+            },
+            {
+              enemyId: 'smugglers',
+              picks:
+                'Underworld Contacts — Headquarters skimming 20% of village spice; then Guerrilla Tactics before night pushes start.',
+            },
+            {
+              enemyId: 'corrino',
+              picks:
+                'Imperial Protocols — the Mandate power spike; save Megalopolis for the 10k obfuscation instead.',
+            },
+            {
+              enemyId: 'ecaz',
+              picks:
+                'Artistic Aspirations — the Masterpiece Solari engine; then National Mythos to deny the War Banner.',
+            },
+          ],
+        },
       },
     ],
     combos: [

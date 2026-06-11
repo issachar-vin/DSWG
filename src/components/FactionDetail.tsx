@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { factions, ROLE_LABELS } from '../data/factions';
 import type { DevTree, Faction } from '../data/factions';
 import HoverCard from './HoverCard';
@@ -15,21 +15,38 @@ const TREE_LABELS: Record<DevTree, string> = {
   expansion: 'Expansion',
 };
 
-const listVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.05 } },
-};
+// Holographic boot-in: random per-panel delay, whole dashboard online within 1s.
+const boot = (delay: number) => ({
+  opacity: [0, 1, 0.3, 1, 0.6, 1],
+  filter: [
+    'brightness(2.6) blur(6px)',
+    'brightness(1.6) blur(2px)',
+    'brightness(0.7) blur(1px)',
+    'brightness(1.5) blur(0px)',
+    'brightness(0.85) blur(0px)',
+    'brightness(1) blur(0px)',
+  ],
+  transition: { duration: 0.34, delay, times: [0, 0.18, 0.34, 0.55, 0.78, 1], ease: 'linear' as const },
+});
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 14 },
-  visible: { opacity: 1, y: 0 },
+// Dynamic variant: framer resolves the random delay at animation time, keeping render pure.
+const panelVariants = {
+  hidden: { opacity: 0 },
+  on: { opacity: 1 },
+  boot: () => boot(Math.random() * 0.6),
 };
 
 const sigilLetter = (name: string) => name.replace(/^(House |The )/, '').charAt(0);
 
 function Panel({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
+  const reduceMotion = useReducedMotion();
   return (
-    <motion.section className={`panel${className ? ` ${className}` : ''}`} variants={itemVariants}>
+    <motion.section
+      className={`panel${className ? ` ${className}` : ''}`}
+      variants={panelVariants}
+      initial="hidden"
+      animate={reduceMotion ? 'on' : 'boot'}
+    >
       <h2 className="panel-title">{title}</h2>
       {children}
     </motion.section>
@@ -43,6 +60,7 @@ interface Props {
 }
 
 export default function FactionDetail({ faction, onBack, onSelect }: Props) {
+  const reduceMotion = useReducedMotion();
   const enemies = faction.matchups.map((m) => ({
     matchup: m,
     enemy: factions.find((f) => f.id === m.enemyId)!,
@@ -69,10 +87,14 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
         className="faction-detail dashboard"
         style={{ '--accent': faction.color } as React.CSSProperties}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.05 } }}
+        exit={{ opacity: 0, transition: { duration: 0.12 } }}
       >
-        <header className="detail-banner dash-banner">
+        <motion.header
+          className="detail-banner dash-banner"
+          initial={{ opacity: 0 }}
+          animate={reduceMotion ? { opacity: 1 } : boot(0.02)}
+        >
           <div className="banner-nav">
             <button className="back-button" onClick={onBack}>
               ← All Factions
@@ -150,9 +172,9 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
               ))}
             </div>
           </div>
-        </header>
+        </motion.header>
 
-        <motion.div className="dash-grid" variants={listVariants} initial="hidden" animate="visible">
+        <div className="dash-grid">
           <div className="dash-col">
             <Panel title="Opening Build Order">
               <ol className="step-list">
@@ -176,6 +198,25 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
                         <>
                           <p className="hover-kicker">{TREE_LABELS[dev.tree]} tree</p>
                           <p>{dev.why}</p>
+                          {dev.patentPlan && (
+                            <>
+                              <p className="hover-kicker">Buy in this order</p>
+                              <ol className="patent-order">
+                                {dev.patentPlan.order.map((pick) => (
+                                  <li key={pick}>{pick}</li>
+                                ))}
+                              </ol>
+                              <p className="hover-kicker">Deny by enemy</p>
+                              {dev.patentPlan.byEnemy.map((target) => (
+                                <p key={target.enemyId} className="patent-enemy">
+                                  <strong>
+                                    {factions.find((f) => f.id === target.enemyId)!.name}:
+                                  </strong>{' '}
+                                  {target.picks}
+                                </p>
+                              ))}
+                            </>
+                          )}
                         </>
                       }
                     >
@@ -327,7 +368,7 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
               ))}
             </div>
           </Panel>
-        </motion.div>
+        </div>
       </motion.section>
     </AccentContext.Provider>
   );

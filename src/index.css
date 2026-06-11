@@ -1,15 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg: #16100b;
-  --bg-raised: #211810;
-  --bg-card: #2a1f14;
+  --bg: #02050b;
+  --bg-raised: #0a121d;
+  --bg-card: #0b1422;
   --text: #e8dcc8;
-  --text-dim: #a8987e;
-  --border: #3d2f1e;
+  --text-dim: #a39378;
+  --border: #24314a;
   --sand: #c9a064;
   --spice: #e07b39;
   --accent: var(--spice);
+  --font-hud: 'Share Tech Mono', 'SFMono-Regular', Menlo, monospace;
   font-family: 'Inter', system-ui, sans-serif;
   color-scheme: dark;
 }
@@ -20,7 +21,7 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: #010204;
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;

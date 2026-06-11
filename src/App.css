@@ -1,117 +1,180 @@
 .app {
   position: relative;
   min-height: 100vh;
-  overflow-x: hidden;
+  /* clip, not hidden: hidden would make .app a scroll container (second scrollbar) */
+  overflow-x: clip;
 }
 
-.hub {
-  will-change: transform;
-}
+/* ============================================================
+   Deep space outside the cockpit: canvas starfield + CSS bodies
+   ============================================================ */
 
-.sky-bodies {
-  position: absolute;
-  inset: 0;
-}
-
-.dunes-backdrop {
+.space-backdrop {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 120% 60% at 50% -10%, rgba(224, 123, 57, 0.12), transparent 60%),
-    radial-gradient(ellipse 80% 40% at 80% 110%, rgba(201, 160, 100, 0.1), transparent 60%),
+    radial-gradient(ellipse 90% 70% at 72% 112%, rgba(224, 123, 57, 0.07), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 12% -12%, rgba(64, 84, 160, 0.09), transparent 60%),
     var(--bg);
 }
 
-/* Night sky over Arrakis: tiled star layers fading toward the dune horizon */
-
-.stars {
+.space-layer {
   position: absolute;
   inset: 0;
-  background-repeat: repeat;
-  mask-image: linear-gradient(to bottom, black 55%, transparent 92%);
 }
 
-.stars-far {
-  background-image:
-    radial-gradient(1px 1px at 17px 34px, rgba(232, 220, 200, 0.5), transparent),
-    radial-gradient(1px 1px at 89px 121px, rgba(232, 220, 200, 0.35), transparent),
-    radial-gradient(1px 1px at 153px 61px, rgba(201, 160, 100, 0.4), transparent),
-    radial-gradient(1px 1px at 211px 147px, rgba(232, 220, 200, 0.45), transparent),
-    radial-gradient(1px 1px at 41px 173px, rgba(232, 220, 200, 0.3), transparent),
-    radial-gradient(1px 1px at 247px 19px, rgba(232, 220, 200, 0.38), transparent);
-  background-size: 271px 193px;
-  animation: twinkle 9s ease-in-out infinite alternate;
+.starfield {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.stars-mid {
-  background-image:
-    radial-gradient(1.5px 1.5px at 67px 23px, rgba(232, 220, 200, 0.55), transparent),
-    radial-gradient(1.5px 1.5px at 191px 156px, rgba(224, 123, 57, 0.45), transparent),
-    radial-gradient(1.5px 1.5px at 137px 97px, rgba(232, 220, 200, 0.5), transparent),
-    radial-gradient(1.5px 1.5px at 293px 201px, rgba(232, 220, 200, 0.4), transparent),
-    radial-gradient(1.5px 1.5px at 29px 229px, rgba(201, 160, 100, 0.5), transparent);
-  background-size: 331px 257px;
-  animation: twinkle 7s ease-in-out 1.5s infinite alternate;
+/* Nebulae: faint interstellar dust clouds */
+
+.nebula {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
 }
 
-.stars-near {
-  background-image:
-    radial-gradient(2px 2px at 103px 47px, rgba(232, 220, 200, 0.75), transparent),
-    radial-gradient(2.5px 2.5px at 311px 191px, rgba(232, 220, 200, 0.6), transparent),
-    radial-gradient(2px 2px at 223px 277px, rgba(224, 123, 57, 0.55), transparent),
-    radial-gradient(2px 2px at 47px 233px, rgba(232, 220, 200, 0.65), transparent);
-  background-size: 401px 313px;
-  animation: twinkle 5s ease-in-out 0.8s infinite alternate;
+.nebula-violet {
+  top: -14%;
+  left: 50%;
+  width: 58vw;
+  height: 44vh;
+  background: radial-gradient(ellipse at 40% 50%, rgba(110, 70, 190, 0.16), rgba(60, 40, 120, 0.07) 45%, transparent 70%);
+  transform: rotate(-14deg);
 }
 
-@keyframes twinkle {
+.nebula-teal {
+  bottom: 2%;
+  left: -16%;
+  width: 50vw;
+  height: 40vh;
+  background: radial-gradient(ellipse at 55% 45%, rgba(40, 130, 150, 0.12), rgba(30, 80, 110, 0.05) 50%, transparent 72%);
+  transform: rotate(10deg);
+}
+
+.nebula-spice {
+  top: 28%;
+  right: -12%;
+  width: 42vw;
+  height: 32vh;
+  background: radial-gradient(ellipse, rgba(224, 123, 57, 0.09), transparent 65%);
+}
+
+/* Distant spiral galaxy */
+
+.galaxy {
+  position: absolute;
+  top: 13%;
+  left: 11%;
+  width: 260px;
+  height: 110px;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 50% 18% at 50% 50%, rgba(238, 226, 204, 0.5), transparent 70%),
+    radial-gradient(ellipse 100% 45% at 50% 50%, rgba(150, 140, 220, 0.22), rgba(90, 70, 160, 0.08) 60%, transparent 75%);
+  transform: rotate(-28deg);
+  filter: blur(1px);
+  animation: galaxy-pulse 14s ease-in-out infinite alternate;
+}
+
+@keyframes galaxy-pulse {
   from {
-    opacity: 0.55;
+    opacity: 0.7;
   }
   to {
     opacity: 1;
   }
 }
 
-/* The two moons of Arrakis */
+/* Arrakis filling the lower starboard viewport */
 
-.moon {
+.planet-arrakis {
   position: absolute;
+  bottom: -36vh;
+  right: -14vw;
+  width: 64vh;
+  height: 64vh;
   border-radius: 50%;
-  animation: moon-float 36s ease-in-out infinite alternate;
+  background: radial-gradient(circle at 30% 28%, rgba(247, 210, 160, 0.95), rgba(216, 150, 86, 0.85) 34%, rgba(150, 92, 48, 0.8) 58%, rgba(58, 34, 18, 0.95) 78%, rgb(8, 5, 3) 92%);
+  box-shadow:
+    inset -28px -36px 80px rgba(0, 0, 0, 0.85),
+    inset 10px 14px 60px rgba(255, 226, 180, 0.25),
+    0 0 90px 6px rgba(224, 150, 80, 0.18);
+  opacity: 0.92;
+  animation: drift-slow 70s ease-in-out infinite alternate;
 }
 
-.moon-first {
+.planet-arrakis::before {
+  content: '';
+  position: absolute;
+  inset: -2.5%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, rgba(255, 200, 140, 0.22), transparent 55%);
+}
+
+.planet-arrakis::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 80% 12% at 46% 38%, rgba(120, 70, 35, 0.35), transparent 70%),
+    radial-gradient(ellipse 70% 9% at 52% 56%, rgba(255, 230, 190, 0.18), transparent 70%),
+    radial-gradient(ellipse 85% 10% at 40% 70%, rgba(110, 60, 30, 0.3), transparent 70%);
+  opacity: 0.8;
+}
+
+/* Ringed gas giant far to port */
+
+.gas-giant {
+  position: absolute;
   top: 9%;
-  right: 11%;
-  width: 120px;
-  height: 120px;
-  background:
-    radial-gradient(circle at 68% 38%, rgba(61, 47, 30, 0.5) 0 7%, transparent 9%),
-    radial-gradient(circle at 42% 64%, rgba(61, 47, 30, 0.45) 0 5%, transparent 7%),
-    radial-gradient(circle at 56% 22%, rgba(61, 47, 30, 0.4) 0 4%, transparent 6%),
-    radial-gradient(circle at 33% 30%, rgba(238, 226, 204, 0.95), rgba(201, 160, 100, 0.6) 48%, rgba(33, 24, 16, 0.95) 80%);
-  box-shadow: 0 0 70px 14px rgba(201, 160, 100, 0.16);
-  opacity: 0.55;
+  left: 6%;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, rgba(180, 196, 220, 0.85), rgba(110, 130, 170, 0.6) 45%, rgba(40, 50, 80, 0.9) 75%, rgb(5, 8, 14) 95%);
+  box-shadow:
+    inset -10px -10px 30px rgba(0, 0, 0, 0.8),
+    0 0 40px 4px rgba(140, 160, 210, 0.12);
+  opacity: 0.75;
+  animation: drift-slow 60s ease-in-out infinite alternate;
 }
 
-.moon-second {
-  top: 22%;
-  left: 7%;
-  width: 56px;
-  height: 56px;
+.gas-giant::after {
+  content: '';
+  position: absolute;
+  inset: 42% -55%;
+  border-radius: 50%;
+  border: 2px solid rgba(190, 200, 230, 0.3);
+  box-shadow: 0 0 0 5px rgba(190, 200, 230, 0.06);
+  transform: rotate(-22deg);
+}
+
+/* Cratered moon */
+
+.moon-shard {
+  position: absolute;
+  top: 34%;
+  left: 26%;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   background:
-    radial-gradient(circle at 60% 55%, rgba(61, 47, 30, 0.45) 0 8%, transparent 11%),
-    radial-gradient(circle at 36% 34%, rgba(236, 196, 156, 0.85), rgba(224, 123, 57, 0.45) 52%, rgba(33, 24, 16, 0.95) 82%);
-  box-shadow: 0 0 40px 8px rgba(224, 123, 57, 0.14);
+    radial-gradient(circle at 62% 58%, rgba(30, 28, 26, 0.5) 0 9%, transparent 12%),
+    radial-gradient(circle at 40% 30%, rgba(30, 28, 26, 0.45) 0 6%, transparent 9%),
+    radial-gradient(circle at 35% 32%, rgba(205, 198, 186, 0.85), rgba(130, 122, 110, 0.6) 50%, rgb(12, 10, 8) 85%);
   opacity: 0.45;
-  animation-duration: 44s;
-  animation-delay: -12s;
+  animation: drift-slow 50s ease-in-out infinite alternate-reverse;
 }
 
-@keyframes moon-float {
+@keyframes drift-slow {
   from {
     transform: translateY(-8px);
   }
@@ -120,72 +183,265 @@
   }
 }
 
-/* Distant ringed planet, low over the horizon */
+/* Ship traffic crossing the viewport */
 
-.planet-distant {
+.ship {
   position: absolute;
-  top: 38%;
-  left: 18%;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 32%, rgba(168, 152, 126, 0.8), rgba(110, 95, 75, 0.5) 55%, rgba(33, 24, 16, 0.9) 85%);
-  opacity: 0.35;
+  opacity: 0;
 }
 
-.planet-distant::after {
+.ship-freighter {
+  top: 24%;
+  left: -8%;
+  width: 70px;
+  height: 8px;
+  border-radius: 40% 60% 60% 40% / 50%;
+  background: linear-gradient(180deg, rgba(70, 80, 100, 0.9), rgba(20, 24, 34, 0.95));
+  box-shadow: inset 0 1px 0 rgba(180, 200, 230, 0.35);
+  animation: ship-cross-right 85s linear infinite;
+}
+
+.ship-freighter::before {
   content: '';
   position: absolute;
-  inset: 38% -42%;
-  border: 1.5px solid rgba(201, 160, 100, 0.45);
-  border-radius: 50%;
-  transform: rotate(-18deg);
+  top: 3px;
+  left: 12px;
+  right: 14px;
+  height: 1.5px;
+  background: repeating-linear-gradient(90deg, rgba(255, 220, 150, 0.9) 0 2px, transparent 2px 7px);
 }
 
-.shooting-star {
+.ship-freighter::after {
+  content: '';
   position: absolute;
+  left: -10px;
+  top: 2px;
+  width: 12px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(130, 190, 255, 0.9), transparent 70%);
+}
+
+.ship-runner {
+  top: 58%;
+  right: -6%;
+  width: 34px;
+  height: 5px;
+  border-radius: 60% 40% 40% 60% / 50%;
+  background: linear-gradient(180deg, rgba(90, 96, 110, 0.85), rgba(24, 26, 34, 0.95));
+  animation: ship-cross-left 120s linear 18s infinite;
+}
+
+.ship-runner::after {
+  content: '';
+  position: absolute;
+  right: -7px;
+  top: 1px;
+  width: 9px;
+  height: 3px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 160, 90, 0.9), transparent 70%);
+}
+
+.ship-skiff {
   top: 12%;
+  left: -3%;
+  width: 14px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(140, 150, 170, 0.8);
+  animation: ship-cross-right 55s linear 32s infinite;
+}
+
+.ship-skiff::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 0.5px;
+  width: 5px;
+  height: 2px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(130, 190, 255, 0.85), transparent 70%);
+}
+
+@keyframes ship-cross-right {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.85;
+  }
+  46% {
+    opacity: 0.85;
+  }
+  48%,
+  100% {
+    transform: translate(120vw, -7vh);
+    opacity: 0;
+  }
+}
+
+@keyframes ship-cross-left {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.75;
+  }
+  38% {
+    opacity: 0.75;
+  }
+  40%,
+  100% {
+    transform: translate(-115vw, 5vh);
+    opacity: 0;
+  }
+}
+
+/* A ship jumping in: bright streak across the upper viewport */
+
+.comet {
+  position: absolute;
+  top: 14%;
   left: -8%;
-  width: 110px;
+  width: 130px;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, transparent, rgba(238, 226, 204, 0.85));
+  background: linear-gradient(90deg, transparent, rgba(190, 220, 255, 0.9));
   opacity: 0;
-  animation: shoot 17s linear infinite;
+  animation: comet-shoot 19s linear infinite;
 }
 
-@keyframes shoot {
+@keyframes comet-shoot {
   0%,
   90% {
     opacity: 0;
-    transform: translate(0, 0) rotate(9deg);
+    transform: translate(0, 0) rotate(8deg);
   }
   92% {
-    opacity: 0.85;
+    opacity: 0.9;
   }
   97%,
   100% {
     opacity: 0;
-    transform: translate(115vw, 18vh) rotate(9deg);
+    transform: translate(115vw, 16vh) rotate(8deg);
   }
 }
 
-.dunes-backdrop::after {
-  content: '';
+/* ============================================================
+   Cockpit overlay: vignette, scanlines, HUD frame + readouts
+   ============================================================ */
+
+.cockpit {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.cockpit-vignette {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 60% 18% at 20% 92%, rgba(201, 160, 100, 0.08), transparent 70%),
-    radial-gradient(ellipse 70% 14% at 75% 97%, rgba(224, 123, 57, 0.07), transparent 70%);
-  animation: dune-drift 24s ease-in-out infinite alternate;
+  background: radial-gradient(ellipse 120% 95% at 50% 45%, transparent 58%, rgba(0, 0, 0, 0.35) 86%, rgba(0, 0, 0, 0.7) 100%);
 }
 
-@keyframes dune-drift {
+.cockpit-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(180, 210, 255, 0.016) 0 1px, transparent 1px 3px);
+  animation: scan-drift 9s linear infinite;
+}
+
+@keyframes scan-drift {
   from {
-    transform: translateX(-3%);
+    background-position: 0 0;
   }
   to {
-    transform: translateX(3%);
+    background-position: 0 60px;
+  }
+}
+
+.hud-corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  opacity: 0.5;
+}
+
+.hud-corner.tl {
+  top: 14px;
+  left: 14px;
+  border-top: 1.5px solid var(--spice);
+  border-left: 1.5px solid var(--spice);
+}
+
+.hud-corner.tr {
+  top: 14px;
+  right: 14px;
+  border-top: 1.5px solid var(--spice);
+  border-right: 1.5px solid var(--spice);
+}
+
+.hud-corner.bl {
+  bottom: 14px;
+  left: 14px;
+  border-bottom: 1.5px solid var(--spice);
+  border-left: 1.5px solid var(--spice);
+}
+
+.hud-corner.br {
+  bottom: 14px;
+  right: 14px;
+  border-bottom: 1.5px solid var(--spice);
+  border-right: 1.5px solid var(--spice);
+}
+
+.hud-readout {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-hud);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: color-mix(in srgb, var(--sand) 70%, transparent);
+  text-shadow: 0 0 8px rgba(224, 123, 57, 0.35);
+}
+
+.hud-readout.top-left {
+  top: 20px;
+  left: 52px;
+}
+
+.hud-readout.top-right {
+  top: 20px;
+  right: 52px;
+}
+
+.hud-readout.bottom-left {
+  bottom: 18px;
+  left: 52px;
+}
+
+.hud-readout.bottom-right {
+  bottom: 18px;
+  right: 52px;
+}
+
+.hud-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--spice);
+  box-shadow: 0 0 8px var(--spice);
+  animation: hud-blink 1.6s steps(2, start) infinite;
+}
+
+@keyframes hud-blink {
+  to {
+    opacity: 0.15;
   }
 }
 
@@ -200,23 +456,27 @@ main {
 .hero {
   text-align: center;
   margin-bottom: 56px;
+  transition: opacity 0.3s;
 }
 
 .hero-kicker {
+  font-family: var(--font-hud);
   text-transform: uppercase;
   letter-spacing: 0.5em;
   font-size: 0.8rem;
   color: var(--spice);
+  text-shadow: 0 0 14px rgba(224, 123, 57, 0.55);
   margin: 0 0 8px;
 }
 
 .hero h1 {
   font-size: clamp(2.4rem, 6vw, 4rem);
   margin: 0 0 16px;
-  background: linear-gradient(180deg, var(--text) 30%, var(--sand));
+  background: linear-gradient(180deg, #fff8ec 0%, var(--text) 40%, var(--sand) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 0 22px rgba(224, 123, 57, 0.25));
 }
 
 .hero-subtitle {
@@ -224,6 +484,70 @@ main {
   max-width: 560px;
   margin: 0 auto;
   line-height: 1.6;
+}
+
+.powering-down .hero,
+.powering-down .sources {
+  opacity: 0.15;
+}
+
+/* ============================================================
+   Holographic frame skin shared by cards, banner, and panels
+   ============================================================ */
+
+.faction-card,
+.detail-banner,
+.panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 42%),
+    color-mix(in srgb, var(--bg-card) 55%, transparent);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: 4px;
+  box-shadow:
+    inset 0 0 26px color-mix(in srgb, var(--accent) 7%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 25%, transparent),
+    0 0 28px -8px color-mix(in srgb, var(--accent) 30%, transparent),
+    0 22px 44px -20px rgba(0, 0, 0, 0.8);
+}
+
+/* Corner brackets */
+.faction-card::before,
+.detail-banner::before,
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent), var(--accent));
+  background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+  background-size: 16px 1.5px, 1.5px 16px, 16px 1.5px, 1.5px 16px, 16px 1.5px, 1.5px 16px, 16px 1.5px, 1.5px 16px;
+  background-repeat: no-repeat;
+  opacity: 0.65;
+}
+
+/* Glass sheen + projection scanlines */
+.faction-card::after,
+.detail-banner::after,
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.05), transparent 28%),
+    repeating-linear-gradient(0deg, rgba(190, 215, 255, 0.025) 0 1px, transparent 1px 3px);
 }
 
 /* Faction grid */
@@ -235,46 +559,34 @@ main {
 }
 
 .faction-card {
-  position: relative;
-  background: color-mix(in srgb, var(--bg-card) 52%, transparent);
-  backdrop-filter: blur(14px) saturate(1.15);
-  -webkit-backdrop-filter: blur(14px) saturate(1.15);
-  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
-  border-radius: 12px;
   padding: 28px 24px 22px;
   text-align: left;
   color: var(--text);
   transition: border-color 0.25s, box-shadow 0.25s;
   overflow: hidden;
-  box-shadow:
-    inset 0 1px 0 rgba(232, 220, 200, 0.06),
-    0 22px 44px -20px rgba(0, 0, 0, 0.65);
-}
-
-.faction-card::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: var(--accent);
-  opacity: 0.7;
 }
 
 .faction-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 12px 40px -12px color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:
+    inset 0 0 32px color-mix(in srgb, var(--accent) 12%, transparent),
+    0 0 42px -6px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 12px 40px -12px rgba(0, 0, 0, 0.7);
 }
 
 .faction-card h2 {
   font-size: 1.5rem;
   margin: 16px 0 2px;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .faction-archetype {
+  font-family: var(--font-hud);
   color: var(--accent);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 50%, transparent);
   margin: 0 0 12px;
 }
 
@@ -291,7 +603,8 @@ main {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.78rem;
+  font-family: var(--font-hud);
+  font-size: 0.72rem;
   color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -311,6 +624,7 @@ main {
 
 .pip.filled {
   background: var(--accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent);
 }
 
 /* Sigil */
@@ -328,6 +642,7 @@ main {
   border: 2px solid var(--accent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 55%, transparent));
 }
 
 .faction-sigil.large {
@@ -351,16 +666,6 @@ main {
   gap: 24px;
   flex-wrap: wrap;
   padding: 28px;
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
-  border-radius: 14px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
-    color-mix(in srgb, var(--bg-raised) 55%, transparent);
-  backdrop-filter: blur(16px) saturate(1.15);
-  -webkit-backdrop-filter: blur(16px) saturate(1.15);
-  box-shadow:
-    inset 0 1px 0 rgba(232, 220, 200, 0.07),
-    0 26px 52px -22px rgba(0, 0, 0, 0.7);
   margin-bottom: 28px;
 }
 
@@ -377,14 +682,18 @@ main {
   width: fit-content;
   background: none;
   border: none;
+  font-family: var(--font-hud);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   color: var(--text-dim);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   padding: 0;
-  transition: color 0.2s;
+  transition: color 0.2s, text-shadow 0.2s;
 }
 
 .back-button:hover {
   color: var(--accent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
 }
 
 .faction-switcher {
@@ -434,6 +743,7 @@ main {
 .detail-title h1 {
   font-size: clamp(2rem, 5vw, 3rem);
   margin: 0;
+  text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .detail-title p {
@@ -481,11 +791,12 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-hud);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   padding: 4px 11px;
-  border-radius: 99px;
+  border-radius: 2px;
   border: 1px solid var(--border);
   color: var(--text-dim);
   white-space: nowrap;
@@ -495,6 +806,7 @@ main {
   border-color: color-mix(in srgb, var(--accent) 70%, transparent);
   background: color-mix(in srgb, var(--accent) 14%, transparent);
   color: var(--text);
+  box-shadow: 0 0 14px -4px color-mix(in srgb, var(--accent) 60%, transparent);
 }
 
 .star {
@@ -532,9 +844,9 @@ main {
   font-family: 'Inter', sans-serif;
   font-size: 0.73rem;
   padding: 3px 10px;
-  border-radius: 99px;
+  border-radius: 2px;
   border: 1px solid var(--border);
-  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
   color: var(--text-dim);
   white-space: nowrap;
   line-height: 1.5;
@@ -544,6 +856,7 @@ main {
   border-color: color-mix(in srgb, var(--accent) 55%, transparent);
   background: color-mix(in srgb, var(--accent) 11%, transparent);
   color: var(--text);
+  box-shadow: 0 0 12px -4px color-mix(in srgb, var(--accent) 50%, transparent);
 }
 
 .chip.plus {
@@ -566,7 +879,7 @@ main {
 
 .hover-target {
   cursor: default;
-  border-radius: 6px;
+  border-radius: 3px;
   transition: background-color 0.15s;
 }
 
@@ -578,23 +891,25 @@ main {
 
 .hover-target.inline {
   display: inline-flex;
-  border-radius: 99px;
+  border-radius: 2px;
 }
 
 .hover-card {
   position: fixed;
   z-index: 60;
   width: min(300px, calc(100vw - 24px));
-  background: color-mix(in srgb, var(--bg-raised) 72%, transparent);
+  background: color-mix(in srgb, var(--bg-raised) 82%, transparent);
   backdrop-filter: blur(18px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
-  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  border-radius: 4px;
   padding: 12px 14px;
   font-size: 0.82rem;
   line-height: 1.55;
   color: var(--text-dim);
-  box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 0 24px -6px color-mix(in srgb, var(--accent) 40%, transparent),
+    0 14px 36px -8px rgba(0, 0, 0, 0.7);
   pointer-events: none;
 }
 
@@ -612,12 +927,40 @@ main {
 }
 
 .hover-kicker {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.66rem;
-  font-weight: 600;
+  font-family: var(--font-hud);
+  font-size: 0.64rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--accent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+/* Patent plan (Vernius dev-order hover card): wider card, compact lists */
+
+.hover-card:has(.patent-order) {
+  width: min(460px, calc(100vw - 24px));
+}
+
+.patent-order {
+  margin: 0 0 8px;
+  padding-left: 18px;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.patent-order li {
+  margin-bottom: 3px;
+}
+
+.patent-order li::marker {
+  color: var(--accent);
+  font-family: var(--font-hud);
+}
+
+.hover-card p.patent-enemy {
+  font-size: 0.74rem;
+  line-height: 1.45;
+  margin-bottom: 4px;
 }
 
 /* Panels */
@@ -637,26 +980,27 @@ main {
 }
 
 .panel {
-  background: color-mix(in srgb, var(--bg-card) 52%, transparent);
-  backdrop-filter: blur(14px) saturate(1.15);
-  -webkit-backdrop-filter: blur(14px) saturate(1.15);
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
-  border-top: 2px solid color-mix(in srgb, var(--accent) 65%, transparent);
-  border-radius: 10px;
   padding: 14px 16px 16px;
-  box-shadow:
-    inset 0 1px 0 rgba(232, 220, 200, 0.06),
-    0 22px 44px -20px rgba(0, 0, 0, 0.65);
 }
 
 .panel-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.74rem;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   color: var(--accent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent);
   margin: 0 0 10px;
+}
+
+.panel-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 45%, transparent), transparent);
 }
 
 .panel-footnote {
@@ -681,10 +1025,10 @@ main {
 }
 
 .step-num {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-hud);
   font-size: 0.68rem;
-  font-weight: 600;
   color: var(--accent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 45%, transparent);
   min-width: 14px;
   text-align: right;
   flex-shrink: 0;
@@ -703,22 +1047,27 @@ main {
   display: inline-block;
   flex-shrink: 0;
   align-self: center;
+  box-shadow: 0 0 6px currentcolor;
 }
 
 .tree-dot.economy {
   background: #e8923a;
+  color: #e8923a;
 }
 
 .tree-dot.military {
   background: #e0452f;
+  color: #e0452f;
 }
 
 .tree-dot.statecraft {
   background: #4f9ec4;
+  color: #4f9ec4;
 }
 
 .tree-dot.expansion {
   background: #4caf7d;
+  color: #4caf7d;
 }
 
 .tree-legend {
@@ -770,7 +1119,7 @@ main {
 
 .unit-list > .hover-target + .hover-target {
   border-top: 1px solid var(--border);
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 3px 3px;
 }
 
 .unit-row {
@@ -783,6 +1132,7 @@ main {
   color: var(--accent);
   flex-shrink: 0;
   margin-top: 3px;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 60%, transparent));
 }
 
 .unit-body {
@@ -839,9 +1189,8 @@ main {
 }
 
 .combo-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--sand);
@@ -883,7 +1232,7 @@ main {
 
 .panel.enemies > .hover-target + .hover-target {
   border-top: 1px solid var(--border);
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 3px 3px;
 }
 
 .enemy-row {
@@ -906,6 +1255,7 @@ main {
   border: 1.5px solid var(--enemy);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   background: color-mix(in srgb, var(--enemy) 12%, transparent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--enemy) 50%, transparent));
 }
 
 .enemy-body {
@@ -925,12 +1275,13 @@ main {
   color: var(--text-dim);
   font-size: 0.85rem;
   line-height: 1;
-  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .enemy-jump:hover {
   color: var(--enemy);
   border-color: var(--enemy);
+  box-shadow: 0 0 12px -2px var(--enemy);
   transform: translateX(2px);
 }
 
@@ -952,9 +1303,8 @@ main {
 }
 
 .enemy-line > span {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.62rem;
-  font-weight: 600;
+  font-family: var(--font-hud);
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-right: 5px;
@@ -981,12 +1331,12 @@ main {
 }
 
 .plan-phase h3 {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--sand);
+  text-shadow: 0 0 8px rgba(201, 160, 100, 0.4);
   margin: 0 0 6px;
 }
 
@@ -1021,6 +1371,12 @@ main {
   }
 }
 
+@media (max-width: 900px) {
+  .hud-readout {
+    display: none;
+  }
+}
+
 @media (max-width: 720px) {
   .dash-grid,
   .plan-phases {
@@ -1047,6 +1403,7 @@ main {
   margin-top: 64px;
   border-top: 1px solid var(--border);
   padding-top: 24px;
+  transition: opacity 0.3s;
 }
 
 .sources h2 {
@@ -1073,13 +1430,17 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dunes-backdrop::after,
-  .stars,
-  .moon {
+  .galaxy,
+  .planet-arrakis,
+  .gas-giant,
+  .moon-shard,
+  .cockpit-scanlines,
+  .hud-pulse {
     animation: none;
   }
 
-  .shooting-star {
+  .ship,
+  .comet {
     display: none;
   }
 }

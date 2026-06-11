@@ -1,21 +1,19 @@
-import { useEffect, useState } from 'react';
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { factions, sources } from './data/factions';
 import FactionCard from './components/FactionCard';
 import FactionDetail from './components/FactionDetail';
+import SpaceBackdrop from './components/SpaceBackdrop';
 import './App.css';
+
+const SHUTDOWN_MS = 460;
 
 export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [pendingId, setPendingId] = useState<string | null>(null);
   const selected = factions.find((f) => f.id === selectedId);
   const reduceMotion = useReducedMotion();
+  const shutdownTimer = useRef(0);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -32,34 +30,40 @@ export default function App() {
     return () => window.removeEventListener('mousemove', onMove);
   }, [mouseX, mouseY, reduceMotion]);
 
-  const hubRotateY = useTransform(nx, [-0.5, 0.5], [-2.5, 2.5]);
-  const hubRotateX = useTransform(ny, [-0.5, 0.5], [2, -2]);
-  const farX = useTransform(nx, [-0.5, 0.5], [7, -7]);
-  const farY = useTransform(ny, [-0.5, 0.5], [5, -5]);
-  const midX = useTransform(nx, [-0.5, 0.5], [14, -14]);
-  const midY = useTransform(ny, [-0.5, 0.5], [9, -9]);
-  const nearX = useTransform(nx, [-0.5, 0.5], [22, -22]);
-  const nearY = useTransform(ny, [-0.5, 0.5], [14, -14]);
-  const skyX = useTransform(nx, [-0.5, 0.5], [32, -32]);
-  const skyY = useTransform(ny, [-0.5, 0.5], [20, -20]);
+  useEffect(() => () => window.clearTimeout(shutdownTimer.current), []);
+
+  const pickFaction = (id: string) => {
+    if (pendingId) return;
+    if (reduceMotion) {
+      setSelectedId(id);
+      return;
+    }
+    setPendingId(id);
+    shutdownTimer.current = window.setTimeout(() => {
+      setSelectedId(id);
+      setPendingId(null);
+    }, SHUTDOWN_MS);
+  };
 
   return (
     <div className="app">
-      <div className="dunes-backdrop" aria-hidden="true">
-        <motion.div className="stars stars-far" style={{ x: farX, y: farY }} />
-        <motion.div className="stars stars-mid" style={{ x: midX, y: midY }} />
-        <motion.div className="stars stars-near" style={{ x: nearX, y: nearY }} />
-        <motion.div className="sky-bodies" style={{ x: skyX, y: skyY }}>
-          <div className="planet-distant" />
-          <div className="moon moon-first" />
-          <div className="moon moon-second" />
-        </motion.div>
-        <div className="shooting-star" />
+      <SpaceBackdrop nx={nx} ny={ny} />
+      <div className="cockpit" aria-hidden="true">
+        <div className="cockpit-vignette" />
+        <div className="cockpit-scanlines" />
+        <span className="hud-corner tl" />
+        <span className="hud-corner tr" />
+        <span className="hud-corner bl" />
+        <span className="hud-corner br" />
+        <div className="hud-readout top-left">GUILD NAVCOM · ARRAKIS ORBIT</div>
+        <div className="hud-readout top-right">SIG ▮▮▮▮▯ · LINK STABLE</div>
+        <div className="hud-readout bottom-left">
+          <span className="hud-pulse" />
+          SPICE FLOW NOMINAL
+        </div>
+        <div className="hud-readout bottom-right">CHOAM UPLINK 88.4%</div>
       </div>
-      <motion.div
-        className="hub"
-        style={{ rotateX: hubRotateX, rotateY: hubRotateY, transformPerspective: 1400 }}
-      >
+      <div className="hub">
         <AnimatePresence mode="wait">
           {selected ? (
             <FactionDetail
@@ -71,9 +75,10 @@ export default function App() {
           ) : (
             <motion.main
               key="grid"
+              className={pendingId ? 'powering-down' : undefined}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              exit={{ opacity: 0, transition: { duration: 0.12 } }}
             >
               <header className="hero">
                 <motion.p
@@ -108,7 +113,14 @@ export default function App() {
                 animate="visible"
               >
                 {factions.map((faction) => (
-                  <FactionCard key={faction.id} faction={faction} onSelect={setSelectedId} />
+                  <FactionCard
+                    key={faction.id}
+                    faction={faction}
+                    onSelect={pickFaction}
+                    shutdown={pendingId !== null && pendingId !== faction.id}
+                    picked={pendingId === faction.id}
+                    locked={pendingId !== null}
+                  />
                 ))}
               </motion.div>
               <footer className="sources">
@@ -126,7 +138,7 @@ export default function App() {
             </motion.main>
           )}
         </AnimatePresence>
-      </motion.div>
+      </div>
     </div>
   );
 }
