@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type { Faction } from '../data/factions';
+import FactionImage from './FactionImage';
 
 const DIFFICULTY_LABELS = ['Beginner', 'Intermediate', 'Advanced'];
 
@@ -49,6 +50,9 @@ export default function FactionCard({ faction, onSelect, shutdown, picked, locke
       whileTap={locked ? undefined : { scale: 0.97 }}
       onClick={() => !locked && onSelect(faction.id)}
     >
+      <div className="faction-img-wrap" aria-hidden="true">
+        <FactionImage src={faction.image} className="faction-img" />
+      </div>
       <motion.div className="faction-sigil" layoutId={`sigil-${faction.id}`}>
         {faction.name.replace(/^(House |The )/, '').charAt(0)}
       </motion.div>

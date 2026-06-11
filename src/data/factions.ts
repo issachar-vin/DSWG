@@ -76,6 +76,7 @@ export interface Faction {
   archetype: string;
   leader: string;
   color: string;
+  image: string;
   difficulty: 1 | 2 | 3;
   tagline: string;
   overview: string;
@@ -100,6 +101,7 @@ export const factions: Faction[] = [
     archetype: 'Diplomacy & Politics',
     leader: 'Duke Leto Atreides',
     color: '#4caf7d',
+    image: '/faction_animations/atreides.gif',
     difficulty: 1,
     tagline: 'Win the war before a shot is fired.',
     overview:
@@ -420,6 +422,7 @@ export const factions: Faction[] = [
     archetype: 'Military & Oppression',
     leader: 'Baron Vladimir Harkonnen',
     color: '#e0452f',
+    image: '/faction_animations/harkonnen.gif',
     difficulty: 1,
     tagline: 'Fear is a resource. Spend it freely.',
     overview:
@@ -736,6 +739,7 @@ export const factions: Faction[] = [
     archetype: 'Guerrilla & Desert Power',
     leader: 'Liet-Kynes',
     color: '#4f9ec4',
+    image: '/faction_animations/fremen.gif',
     difficulty: 2,
     tagline: 'The desert is not your enemy. It is theirs.',
     overview:
@@ -1048,6 +1052,7 @@ export const factions: Faction[] = [
     archetype: 'Economy & Subterfuge',
     leader: 'Esmar Tuek',
     color: '#e8923a',
+    image: '/faction_animations/smuggler.gif',
     difficulty: 3,
     tagline: "Every faction on Arrakis works for you. They just don't know it.",
     overview:
@@ -1354,6 +1359,7 @@ export const factions: Faction[] = [
     archetype: 'Imperial Elite & Economy',
     leader: 'Emperor Shaddam IV',
     color: '#d9b54a',
+    image: '/faction_animations/corrino.gif',
     difficulty: 3,
     tagline: 'Ten thousand years of rule. A few regions of sand.',
     overview:
@@ -1667,6 +1673,7 @@ export const factions: Faction[] = [
     archetype: 'Culture & Sanctuaries',
     leader: 'Archduke Armand Ecaz',
     color: '#a266c9',
+    image: '/faction_animations/ecaz.jpg',
     difficulty: 2,
     tagline: 'Beauty is leverage. Art is territory.',
     overview:
@@ -1980,6 +1987,7 @@ export const factions: Faction[] = [
     archetype: 'Technology & Drones',
     leader: 'Earl Rhombur Vernius',
     color: '#43c6c0',
+    image: '/faction_animations/vernius.gif',
     difficulty: 2,
     tagline: 'The desert is a network problem.',
     overview:

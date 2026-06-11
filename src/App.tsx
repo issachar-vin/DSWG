@@ -8,8 +8,13 @@ import './App.css';
 
 const SHUTDOWN_MS = 460;
 
+const factionFromHash = () => {
+  const id = window.location.hash.slice(1);
+  return factions.some((f) => f.id === id) ? id : null;
+};
+
 export default function App() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(factionFromHash);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const selected = factions.find((f) => f.id === selectedId);
   const reduceMotion = useReducedMotion();
@@ -32,15 +37,37 @@ export default function App() {
 
   useEffect(() => () => window.clearTimeout(shutdownTimer.current), []);
 
+  // Browser back/forward: the hash is the source of truth for which view is shown
+  useEffect(() => {
+    const onHashChange = () => {
+      window.clearTimeout(shutdownTimer.current);
+      setPendingId(null);
+      setSelectedId(factionFromHash());
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  // Pushes a history entry; the hashchange listener syncs state
+  const showFaction = (id: string) => {
+    window.location.hash = id;
+  };
+
+  const goHome = () => {
+    // pushState instead of clearing location.hash — avoids a dangling '#' in the URL
+    history.pushState(null, '', window.location.pathname + window.location.search);
+    setSelectedId(null);
+  };
+
   const pickFaction = (id: string) => {
     if (pendingId) return;
     if (reduceMotion) {
-      setSelectedId(id);
+      showFaction(id);
       return;
     }
     setPendingId(id);
     shutdownTimer.current = window.setTimeout(() => {
-      setSelectedId(id);
+      showFaction(id);
       setPendingId(null);
     }, SHUTDOWN_MS);
   };
@@ -69,8 +96,8 @@ export default function App() {
             <FactionDetail
               key={selected.id}
               faction={selected}
-              onBack={() => setSelectedId(null)}
-              onSelect={setSelectedId}
+              onBack={goHome}
+              onSelect={showFaction}
             />
           ) : (
             <motion.main
