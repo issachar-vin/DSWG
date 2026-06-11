@@ -1317,7 +1317,7 @@ main {
 /* Game plan strip */
 
 .panel.plan-strip {
-  grid-column: 1 / -1;
+  margin-bottom: 16px;
 }
 
 .plan-phases {
