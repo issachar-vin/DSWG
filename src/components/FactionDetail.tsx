@@ -316,40 +316,25 @@ export default function FactionDetail({ faction, onBack, onSelect }: Props) {
           <div className="dash-col">
             <Panel title="Enemy Playbook" className="enemies">
               {enemies.map(({ matchup, enemy }) => (
-                <HoverCard
-                  key={enemy.id}
-                  card={
-                    <>
-                      <p className="hover-kicker">vs {enemy.name}</p>
-                      <p>
-                        <strong>Expect:</strong> {matchup.expect}
-                      </p>
-                      <p>
-                        <strong>Counter:</strong> {matchup.counter}
-                      </p>
-                    </>
-                  }
-                >
-                  <div className="enemy-row" style={{ '--enemy': enemy.color } as React.CSSProperties}>
-                    <span className="enemy-sigil">{sigilLetter(enemy.name)}</span>
-                    <div className="enemy-body">
-                      <span className="enemy-name">{enemy.name}</span>
-                      <p className="enemy-line expect">
-                        <span>Expect</span> {matchup.expect}
-                      </p>
-                      <p className="enemy-line counter">
-                        <span>Counter</span> {matchup.counter}
-                      </p>
-                    </div>
-                    <button
-                      className="enemy-jump"
-                      aria-label={`Open ${enemy.name} guide`}
-                      onClick={() => onSelect(enemy.id)}
-                    >
-                      →
-                    </button>
+                <div key={enemy.id} className="enemy-row" style={{ '--enemy': enemy.color } as React.CSSProperties}>
+                  <span className="enemy-sigil">{sigilLetter(enemy.name)}</span>
+                  <div className="enemy-body">
+                    <span className="enemy-name">{enemy.name}</span>
+                    <p className="enemy-line expect">
+                      <span>Expect</span> {matchup.expect}
+                    </p>
+                    <p className="enemy-line counter">
+                      <span>Counter</span> {matchup.counter}
+                    </p>
                   </div>
-                </HoverCard>
+                  <button
+                    className="enemy-jump"
+                    aria-label={`Open ${enemy.name} guide`}
+                    onClick={() => onSelect(enemy.id)}
+                  >
+                    →
+                  </button>
+                </div>
               ))}
             </Panel>
           </div>
